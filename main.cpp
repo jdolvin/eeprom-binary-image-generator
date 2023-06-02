@@ -20,7 +20,7 @@ int main() {
         mem[index + 768] = 0x00;
 
         // ones place (twos complement)
-        mem[index + 1024] = digits[index % 10];
+        mem[index + 1024] = digits[abs(index - 128) % 10];
         // tens place (twos complement)
         mem[index + 1280] = digits[(abs(index - 128) / 10) % 10];
         // hundreds place (twos complement)
@@ -33,7 +33,7 @@ int main() {
         }
     }
 
-    for (int index = 256; index < sizeof(mem); index++) {
+    for (int index = 2048; index < sizeof(mem); index++) {
         mem[index] = 0xFF;
     }
 
