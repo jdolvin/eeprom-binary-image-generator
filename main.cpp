@@ -7,7 +7,7 @@ int main() {
     // 7Seg digits
     // ca for common anode
     // cc for common cathode
-    std::array<uint8_t, 10> digits = get_digits("cc");
+    std::array<uint8_t, 10> digits = get_digits("ca");
 
     for (int index = 0; index < 256; index++) {
         // ones place
@@ -18,27 +18,21 @@ int main() {
         mem[index + 512] = digits[(index / 100) % 10];
         // sign
         mem[index + 768] = 0x00;
+    }
 
-        // ones place (twos complement)
-        mem[index + 1024] = digits[abs(index - 128) % 10];
-        // tens place (twos complement)
-        mem[index + 1280] = digits[(abs(index - 128) / 10) % 10];
-        // hundreds place (twos complement)
-        mem[index + 1536] = digits[(abs(index - 128) / 100) % 10];
-        // sign (twos complement)
-        if (index < 128) {
-            mem[index + 1792] = 0x01;
+    for(int index = -128; index < 128; index++){
+        mem[(uint8_t)index + 1024] = digits[abs(index) % 10];
+        mem[(uint8_t)index + 1280] = digits[(abs(index) / 10) % 10];
+        mem[(uint8_t)index + 1536] = digits[(abs(index) / 100) % 10];
+        if(index < 0){
+            mem[(uint8_t)index + 1792] = 0x01;
         } else {
-            mem[index + 1792] = 0x00;
+            mem[(uint8_t)index + 1792] = 0x00;
         }
     }
 
-    for (int index = 2048; index < sizeof(mem); index++) {
-        mem[index] = 0xFF;
-    }
-
     FILE *output;
-    output = fopen("./multiplex_7seg_cc.bin", "wb");
+    output = fopen("./multiplex_7seg_ca.bin", "wb");
     fwrite(mem, sizeof(mem), 1, output);
     fclose(output);
 
